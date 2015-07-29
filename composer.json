@@ -10,10 +10,12 @@
         }
     ],
     "require": {
+        "php": ">=5.5",
         "marcj/topsort": "~0.2"
     },
     "require-dev": {
-        "mindplay/testies": "dev-master"
+        "mindplay/testies": "dev-master",
+        "phpunit/php-code-coverage": "~2"
     },
     "autoload": {
         "psr-4": {
