@@ -3,6 +3,8 @@ mindplay/implant
 
 Simple packaging and dependency sorting for embedded JS and CSS assets.
 
+[![Build Status](https://travis-ci.org/mindplay-dk/implant.svg)](https://travis-ci.org/mindplay-dk/implant)
+
 
 ## Introduction
 
