@@ -2,14 +2,17 @@
 
 namespace mindplay\implant;
 
+/**
+ * This interface must be implemented by asset package classes.
+ */
 interface AssetPackage
 {
     /**
-     * @param AssetCollector $collector
+     * @param object $model
      *
      * @return void
      */
-    public function collectAssets(AssetCollector $collector);
+    public function defineAssets($model);
 
     /**
      * @return string[] list of fully-qualified class-names of package dependencies

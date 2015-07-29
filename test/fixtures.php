@@ -1,13 +1,26 @@
 <?php
 
-use mindplay\implant\AssetCollector;
 use mindplay\implant\AssetPackage;
+
+/**
+ * This example class represents a sorted, collect set of embedded assets.
+ *
+ * This is effectively a view-model for rendering HTML tags.
+ */
+class AssetModel
+{
+    /**
+     * @var string[] list of Javascript assets
+     */
+    public $js = array();
+}
 
 class A implements AssetPackage
 {
-    public function collectAssets(AssetCollector $collector)
+    /** @param AssetModel $model */
+    public function defineAssets($model)
     {
-        $collector->addJS('a.js');
+        $model->js[] = 'a.js';
     }
 
     public function listDependencies()
@@ -18,9 +31,10 @@ class A implements AssetPackage
 
 class B implements AssetPackage
 {
-    public function collectAssets(AssetCollector $collector)
+    /** @param AssetModel $model */
+    public function defineAssets($model)
     {
-        $collector->addJS('b.js');
+        $model->js[] = 'b.js';
     }
 
     public function listDependencies()
@@ -31,9 +45,10 @@ class B implements AssetPackage
 
 class C implements AssetPackage
 {
-    public function collectAssets(AssetCollector $collector)
+    /** @param AssetModel $model */
+    public function defineAssets($model)
     {
-        $collector->addJS('c.js');
+        $model->js[] = 'c.js';
     }
 
     public function listDependencies()
@@ -44,13 +59,31 @@ class C implements AssetPackage
 
 class D implements AssetPackage
 {
-    public function collectAssets(AssetCollector $collector)
+    /** @param AssetModel $model */
+    public function defineAssets($model)
     {
-        $collector->addJS('d.js');
+        $model->js[] = 'd.js';
     }
 
     public function listDependencies()
     {
         return array(B::class);
+    }
+}
+
+class PepperedPackage implements AssetPackage
+{
+    /** @var string */
+    public $value;
+
+    /** @param AssetModel $model */
+    public function defineAssets($model)
+    {
+        $model->js[] = "{$this->value}.js";
+    }
+
+    public function listDependencies()
+    {
+        return array();
     }
 }

@@ -2,8 +2,11 @@
 
 namespace mindplay\implant;
 
-use MJS\TopSort\Implementations\StringSort;
+use Closure;
+use ReflectionFunction;
+use ReflectionParameter;
 use UnexpectedValueException;
+use MJS\TopSort\Implementations\StringSort;
 
 class AssetManager
 {
@@ -11,6 +14,11 @@ class AssetManager
      * @var string[] list of asset package class-names
      */
     protected $class_names = array();
+
+    /**
+     * @var Closure[] list of callbacks for peppering packages
+     */
+    protected $peppering = array();
 
     /**
      * @param string $class_name fully-qualified class-name of asset package class
@@ -21,22 +29,37 @@ class AssetManager
     }
 
     /**
-     * @return string rendered HTML
+     * Populate the given asset model by creating and sorting packages, and then
+     * applying {@see AssetPackage::defineAssets()} of every package to the given model.
+     *
+     * @param object $model asset model
+     *
+     * @return void
      */
-    public function render()
+    public function populate($model)
     {
         $packages = $this->sortPackages($this->createPackages());
 
-        $js = new AssetList(new JavascriptAssetType());
-        $css = new AssetList(new StylesheetAssetType());
-
-        $collector = new AssetCollector($js, $css);
+        $this->pepperPackages($packages);
 
         foreach ($packages as $package) {
-            $package->collectAssets($collector);
+            $package->defineAssets($model);
         }
+    }
 
-        return $js->render() . $css->render();
+    /**
+     * Pepper a created AssetPackage using a callback function - this will be called
+     * when you {@see populate()} your asset model, before calling the
+     * {@see AssetPackage::defineAssets()} functions of every added package.
+     *
+     * The given function must accept precisely one argument (and should return nothing)
+     * and must be type-hinted to specify which package you wish to pepper.
+     *
+     * @param Closure $callback function (PackageType $package) : void
+     */
+    public function pepper($callback)
+    {
+        $this->peppering[] = $callback;
     }
 
     /**
@@ -127,7 +150,7 @@ class AssetManager
     protected function sortPackages($packages)
     {
         /**
-         * @var string[]       $order list of topologically sorted class-names
+         * @var string[]       $order  list of topologically sorted class-names
          * @var AssetPackage[] $sorted resulting ordered list of asset packages
          */
 
@@ -150,9 +173,47 @@ class AssetManager
         $sorted = array();
 
         foreach ($order as $class_name) {
-            $sorted[] = $packages[$class_name];
+            $sorted[$class_name] = $packages[$class_name];
         }
 
         return $sorted;
+    }
+
+    /**
+     * Expose packages to previously added peppering functions.
+     *
+     * @param AssetPackage[] $packages
+     *
+     * @see pepper()
+     */
+    protected function pepperPackages($packages)
+    {
+        foreach ($this->peppering as $pepper) {
+            $function = new ReflectionFunction($pepper);
+
+            if ($function->getNumberOfParameters() === 1) {
+                $param = new ReflectionParameter($pepper, 0);
+
+                $class = $param->getClass();
+
+                if ($class !== null) {
+                    $name = $class->getName();
+
+                    if (isset($packages[$name])) {
+                        call_user_func($pepper, $packages[$name]);
+                    }
+
+                    continue;
+                }
+            }
+
+            $file = $function->getFileName();
+            $line = $function->getStartLine();
+
+            throw new UnexpectedValueException(
+                "unexpected function signature at: {$file}, line {$line} " .
+                "(pepper functions must accept precisely one argument, and must provide a type-hint)"
+            );
+        }
     }
 }
