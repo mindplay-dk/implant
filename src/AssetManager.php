@@ -11,7 +11,7 @@ use MJS\TopSort\Implementations\StringSort;
 class AssetManager
 {
     /**
-     * @var string[] list of asset package class-names
+     * @var null[] map where asset package class-name => NULL
      */
     protected $class_names = array();
 
@@ -25,7 +25,7 @@ class AssetManager
      */
     public function add($class_name)
     {
-        $this->class_names[] = $class_name;
+        $this->class_names[$class_name] = null;
     }
 
     /**
@@ -75,7 +75,7 @@ class AssetManager
 
         $packages = array();
 
-        $this->createAllPackages($this->class_names, $packages);
+        $this->createAllPackages(array_keys($this->class_names), $packages);
 
         return $packages;
     }
