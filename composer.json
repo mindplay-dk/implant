@@ -1,0 +1,23 @@
+{
+    "name": "mindplay/implant",
+    "description": "Simple packaging and dependency sorting for embedded JS and CSS assets",
+    "type": "library",
+    "license": "LGPL-3.0+",
+    "authors": [
+        {
+            "name": "Rasmus Schultz",
+            "email": "rasmus@mindplay.dk"
+        }
+    ],
+    "require": {
+        "marcj/topsort": "~0.2"
+    },
+    "require-dev": {
+        "mindplay/testies": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "mindplay\\implant\\": "src/"
+        }
+    }
+}

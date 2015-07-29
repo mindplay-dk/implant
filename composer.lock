@@ -1,0 +1,111 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "hash": "f56c10ce2e853c8973b47cffbd7a733d",
+    "packages": [
+        {
+            "name": "marcj/topsort",
+            "version": "0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marcj/topsort.php.git",
+                "reference": "c989b5707def46271f6bf4d33d71c81da78ae279"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/marcj/topsort.php/zipball/c989b5707def46271f6bf4d33d71c81da78ae279",
+                "reference": "c989b5707def46271f6bf4d33d71c81da78ae279",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4"
+            },
+            "require-dev": {
+                "codeclimate/php-test-reporter": "dev-master",
+                "phpunit/phpunit": "~4.0",
+                "symfony/console": "~2.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "MJS\\TopSort\\": "src/",
+                    "MJS\\TopSort\\Tests\\": "tests/Tests/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Marc J. Schmidt",
+                    "email": "marc@marcjschmidt.de"
+                }
+            ],
+            "description": "High-Performance TopSort/Dependency resolving algorithm",
+            "keywords": [
+                "dependency resolving",
+                "topological sort",
+                "topsort"
+            ],
+            "time": "2015-06-17 11:08:53"
+        }
+    ],
+    "packages-dev": [
+        {
+            "name": "mindplay/testies",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mindplay-dk/testies.git",
+                "reference": "4315563a87700c091de541519f3e4a141b2836f3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mindplay-dk/testies/zipball/4315563a87700c091de541519f3e4a141b2836f3",
+                "reference": "4315563a87700c091de541519f3e4a141b2836f3",
+                "shasum": ""
+            },
+            "require-dev": {
+                "guzzlehttp/guzzle": "5.*",
+                "phpunit/php-code-coverage": "2.*@dev"
+            },
+            "suggest": {
+                "phpunit/php-code-coverage": "2.*@dev"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "header.php"
+                ],
+                "psr-4": {
+                    "mindplay\\testies\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL3.0+"
+            ],
+            "authors": [
+                {
+                    "name": "Rasmus Schultz",
+                    "email": "rasc@fynskemedier.dk"
+                }
+            ],
+            "description": "Yeah, testies: a lightweight library for quick, simple unit-testing",
+            "time": "2015-06-22 09:35:17"
+        }
+    ],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "mindplay/testies": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}
