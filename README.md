@@ -32,11 +32,11 @@ With composer:
 
 ## Tutorial
 
-Asset packages are classes implementing the [AssetPackage](src/AssetPackage) interface,
+Asset packages are classes implementing the [AssetPackage](src/AssetPackage.php) interface,
 which enables them to declare their dependencies on other package types, and to define
 the assets associated with the package, by populating an (arbitrary) model object.
 
-Package classes must have an empty constructor, because the [AssetManager](src/AssetManager)
+Package classes must have an empty constructor, because the [AssetManager](src/AssetManager.php)
 constructs packages automatically as needed. (note that this doesn't mean you can't inject
 dependencies into you package classes - see "peppering" explained below.)
 
