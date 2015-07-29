@@ -14,8 +14,8 @@ packages, and populate a view-model with lists of JS and CSS asset URLs.
 
 This library *does not* define any fixed set of asset types or locations - it's not
 limited to any specific model shape, which means you can use it not only for JS and CSS
-assets, but for anything you can imagine as an asset, such as inline scripts, menus,
-images, locations in a layout, whatever.
+assets, but for anything you can imagine as an asset, such as inline scripts, web-fonts
+menus, images, locations in a layout, whatever.
 
 It also does not output HTML tags or render anything, as this is actually the easy part,
 as you will see in the examples below.
@@ -35,10 +35,11 @@ which enables them to declare their dependencies on other package types, and to 
 the assets associated with the package, by populating an (arbitrary) model object.
 
 Package classes must have an empty constructor, because the [AssetManager](src/AssetManager)
-constructs packages automatically as needed.
+constructs packages automatically as needed. (note that this doesn't mean you can't inject
+dependencies into you package classes - see "peppering" explained below.)
 
 As a case example, let's say you wanted to package JQuery and Bootstrap - first off, you're
-going to need a model that supports JS, CSS and web-fonts:
+going to need a model that supports JS and CSS:
 
 ```PHP
 class AssetModel
@@ -159,4 +160,18 @@ and a [running example](test/example.php) is also provided.
 
 ## Peppering
 
-TODO...
+Sometimes your package classes are going to have external dependencies, maybe even just
+simple things like a root path or a flag - while a package class is required to have an
+empty constructor, you can use property or setter injection, by "peppering" your package
+classes; for example, let's say you added a `$minified` flag to your `BootstrapPackage`
+(from before) to toggle using the minified scripts - you can switch it on/off, like so:
+
+```PHP
+$manager->pepper(function (BootstrapPackage $package) {
+    $package->minified = true;
+});
+```
+
+Any callback functions added in this way, will be applied when the packages are created.
+
+Note that type-hints not matching any added package will be quietly ignored.
