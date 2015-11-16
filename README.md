@@ -46,8 +46,8 @@ going to need a model that supports JS and CSS:
 ```PHP
 class AssetModel
 {
-    public $js = array();
-    public $css = array();
+    public $js = [];
+    public $css = [];
 }
 ```
 
@@ -66,7 +66,7 @@ class JQueryPackage implements AssetPackage
 
     public function listDependencies()
     {
-        return array(); // JQuery has no dependencies
+        return []; // JQuery has no dependencies
     }
 }
 ```
@@ -96,7 +96,7 @@ class BootstrapPackage implements AssetPackage
 
     public function listDependencies()
     {
-        return array(JQueryPackage::class);
+        return [JQueryPackage::class];
     }
 }
 ```

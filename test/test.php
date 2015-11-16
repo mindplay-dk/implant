@@ -22,7 +22,7 @@ test(
 
         $manager->populate($model);
 
-        eq($model->js, array('a.js', 'b.js', 'c.js', 'd.js'), 'it should sort the assets');
+        eq($model->js, ['a.js', 'b.js', 'c.js', 'd.js'], 'it should sort the assets');
     }
 );
 
@@ -37,7 +37,7 @@ test(
 
         $manager->populate($model);
 
-        eq($model->js, array('a.js', 'b.js'), 'it should add the missing asset');
+        eq($model->js, ['a.js', 'b.js'], 'it should add the missing asset');
     }
 );
 
@@ -56,7 +56,7 @@ test(
 
         $manager->populate($model);
 
-        eq($model->js, array('foo.js'), 'pepper function was applied');
+        eq($model->js, ['foo.js'], 'pepper function was applied');
     }
 );
 

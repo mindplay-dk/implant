@@ -12,7 +12,7 @@ class AssetModel
     /**
      * @var string[] list of Javascript assets
      */
-    public $js = array();
+    public $js = [];
 }
 
 class A implements AssetPackage
@@ -25,7 +25,7 @@ class A implements AssetPackage
 
     public function listDependencies()
     {
-        return array();
+        return [];
     }
 }
 
@@ -39,7 +39,7 @@ class B implements AssetPackage
 
     public function listDependencies()
     {
-        return array(A::class);
+        return [A::class];
     }
 }
 
@@ -53,7 +53,7 @@ class C implements AssetPackage
 
     public function listDependencies()
     {
-        return array(B::class);
+        return [B::class];
     }
 }
 
@@ -67,7 +67,7 @@ class D implements AssetPackage
 
     public function listDependencies()
     {
-        return array(B::class);
+        return [B::class];
     }
 }
 
@@ -84,6 +84,6 @@ class PepperedPackage implements AssetPackage
 
     public function listDependencies()
     {
-        return array();
+        return [];
     }
 }

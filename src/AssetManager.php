@@ -13,12 +13,12 @@ class AssetManager
     /**
      * @var null[] map where asset package class-name => NULL
      */
-    protected $class_names = array();
+    protected $class_names = [];
 
     /**
      * @var Closure[] list of callbacks for peppering packages
      */
-    protected $peppering = array();
+    protected $peppering = [];
 
     /**
      * @param string $class_name fully-qualified class-name of asset package class
@@ -73,7 +73,7 @@ class AssetManager
          * @var AssetPackage[] $packages
          */
 
-        $packages = array();
+        $packages = [];
 
         $this->createAllPackages(array_keys($this->class_names), $packages);
 
@@ -95,7 +95,7 @@ class AssetManager
          * @var string[]       $missing
          */
 
-        $created = array();
+        $created = [];
 
         foreach ($class_names as $class_name) {
             $package = $this->createPackage($class_name);
@@ -103,7 +103,7 @@ class AssetManager
             $created[] = $packages[$class_name] = $package;
         }
 
-        $missing = array();
+        $missing = [];
 
         foreach ($created as $package) {
             $dependencies = $package->listDependencies();
@@ -170,7 +170,7 @@ class AssetManager
 
         // create sorted list of packages:
 
-        $sorted = array();
+        $sorted = [];
 
         foreach ($order as $class_name) {
             $sorted[$class_name] = $packages[$class_name];
