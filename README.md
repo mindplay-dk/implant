@@ -19,6 +19,10 @@ limited to any specific model shape, which means you can use it not only for JS 
 assets, but for anything you can imagine as an asset, such as inline scripts, web-fonts
 menus, images, locations in a layout, whatever.
 
+Package granularity is also your choice - for example, you could choose to package related
+scripts with required CSS files as a combined asset package, or you could choose to package
+them individually, say, if the dependency order of scripts and CSS files differ.
+
 It also does not output HTML tags or render anything, as this is actually the easy part,
 as you will see in the examples below.
 
@@ -158,6 +162,31 @@ And you're done!
 
 The [fixtures](test/fixtures.php) and [unit test](test/test.php) provide a specification,
 and a [running example](test/example.php) is also provided.
+
+
+## Injections
+
+You can directly inject assets, in the form of an "anonymous" asset package, e.g. without having
+to declare a class. This has the benefit of being able to do it on the fly, with the disadvantage
+of being unable to reference the package - in other words, a directly injected asset package may
+have dependencies, but other packages cannot depend upon it; in some situations, such as adding
+assets directly from a controller or view, this is perfectly acceptable.
+
+Example:
+
+```php
+$manager->inject(
+    function ($model) {
+        $model->js[] = "/assets/js/page_init.js"
+    },
+    [JQueryPackage::class]
+);
+```
+
+In this example, we add a page-specific initialization script, which requires JQuery - this
+injected package depends upon `JQueryPackage`, which will be applied before it; note again that
+this anonymously injected package cannot be identified, which implies that no other package
+may depend upon it.
 
 
 ## Peppering

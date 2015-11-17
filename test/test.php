@@ -60,4 +60,27 @@ test(
     }
 );
 
+test(
+    'can inject anonymous assets',
+    function () {
+        $manager = new AssetManager();
+
+        $manager->inject(
+            function (AssetModel $model) {
+                $model->js[] = 'injected.js';
+            },
+            [B::class]
+        );
+
+        $manager->add(D::class);
+        $manager->add(C::class);
+
+        $model = new AssetModel();
+
+        $manager->populate($model);
+
+        eq($model->js, ['a.js', 'b.js', 'injected.js', 'c.js', 'd.js'], 'it should add dependencies and sort assets');
+    }
+);
+
 exit(run());

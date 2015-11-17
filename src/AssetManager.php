@@ -16,6 +16,11 @@ class AssetManager
     protected $class_names = [];
 
     /**
+     * @var AssetInjection[] list of injected, anonymous asset packages
+     */
+    protected $injections = [];
+
+    /**
      * @var Closure[] list of callbacks for peppering packages
      */
     protected $peppering = [];
@@ -26,6 +31,17 @@ class AssetManager
     public function add($class_name)
     {
         $this->class_names[$class_name] = null;
+    }
+
+    /**
+     * @param callable $callback     asset definition callback - function ($model) : void
+     * @param string[] $dependencies list of fully-qualified class-names of package dependencies
+     *
+     * @return void
+     */
+    public function inject(callable $callback, array $dependencies = [])
+    {
+        $this->injections[] = new AssetInjection($callback, $dependencies);
     }
 
     /**
@@ -71,53 +87,37 @@ class AssetManager
     {
         /**
          * @var AssetPackage[] $packages
+         * @var AssetPackage[] $pending
          */
 
-        $packages = [];
+        $class_names = array_keys($this->class_names);
 
-        $this->createAllPackages(array_keys($this->class_names), $packages);
+        $packages = array_merge(
+            $this->injections,
+            array_combine($class_names, array_map([$this, "createPackage"], $class_names))
+        );
+
+        $pending = array_keys($packages);
+
+        $done = [];
+
+        while (count($pending)) {
+            $name = array_pop($pending);
+
+            if (isset($done[$name])) {
+                continue;
+            }
+
+            if (!isset($packages[$name])) {
+                $packages[$name] = $this->createPackage($name);
+            }
+
+            $pending = array_merge($pending, $packages[$name]->listDependencies());
+
+            $done[$name] = true;
+        }
 
         return $packages;
-    }
-
-    /**
-     * Recursively create packages and all of their dependencies
-     *
-     * @param string[]       $class_names list of package class-names
-     * @param AssetPackage[] &$packages   packages indexed by class-name
-     *
-     * @return void
-     */
-    protected function createAllPackages($class_names, &$packages)
-    {
-        /**
-         * @var AssetPackage[] $created
-         * @var string[]       $missing
-         */
-
-        $created = [];
-
-        foreach ($class_names as $class_name) {
-            $package = $this->createPackage($class_name);
-
-            $created[] = $packages[$class_name] = $package;
-        }
-
-        $missing = [];
-
-        foreach ($created as $package) {
-            $dependencies = $package->listDependencies();
-
-            foreach ($dependencies as $dependency) {
-                if (!isset($packages[$dependency])) {
-                    $missing[] = $dependency;
-                }
-            }
-        }
-
-        if (count($missing)) {
-            $this->createAllPackages($missing, $packages);
-        }
     }
 
     /**
@@ -143,7 +143,7 @@ class AssetManager
     }
 
     /**
-     * @param AssetPackage[] $packages packages indexed by class-name
+     * @param AssetPackage[] $packages list of packages
      *
      * @return AssetPackage[] sorted list of packages
      */
@@ -154,16 +154,16 @@ class AssetManager
          * @var AssetPackage[] $sorted resulting ordered list of asset packages
          */
 
-        // pre-sort packages by class-name:
+        // pre-sort packages by index:
 
-        ksort($packages);
+        ksort($packages, SORT_STRING);
 
         // topologically sort packages by dependencies:
 
         $sorter = new StringSort();
 
-        foreach ($packages as $class_name => $package) {
-            $sorter->add($class_name, $package->listDependencies());
+        foreach ($packages as $index => $package) {
+            $sorter->add($index, $package->listDependencies());
         }
 
         $order = $sorter->sort(); // TODO QA: catch and re-throw CircularDependencyException here?
@@ -172,8 +172,8 @@ class AssetManager
 
         $sorted = [];
 
-        foreach ($order as $class_name) {
-            $sorted[$class_name] = $packages[$class_name];
+        foreach ($order as $index) {
+            $sorted[$index] = $packages[$index];
         }
 
         return $sorted;
