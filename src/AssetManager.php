@@ -213,7 +213,7 @@ class AssetManager
                 $class = $param->getClass();
 
                 if ($class !== null) {
-                    $name = $class->getName();
+                    $name = $class->name;
 
                     if (isset($packages[$name])) {
                         call_user_func($pepper, $packages[$name]);
