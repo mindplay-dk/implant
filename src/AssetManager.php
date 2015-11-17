@@ -27,6 +27,8 @@ class AssetManager
 
     /**
      * @param string $class_name fully-qualified class-name of asset package class
+     *
+     * @return void
      */
     public function add($class_name)
     {
@@ -72,6 +74,8 @@ class AssetManager
      * and must be type-hinted to specify which package you wish to pepper.
      *
      * @param Closure $callback function (PackageType $package) : void
+     *
+     * @return void
      */
     public function pepper($callback)
     {
@@ -81,9 +85,9 @@ class AssetManager
     /**
      * Create all packages
      *
-     * @return AssetPackage[] list of asset packages
+     * @return AssetPackage[] map of asset packages
      */
-    protected function createPackages()
+    private function createPackages()
     {
         /**
          * @var AssetPackage[] $packages
@@ -102,19 +106,19 @@ class AssetManager
         $done = [];
 
         while (count($pending)) {
-            $name = array_pop($pending);
+            $index = array_pop($pending);
 
-            if (isset($done[$name])) {
+            if (isset($done[$index])) {
                 continue;
             }
 
-            if (!isset($packages[$name])) {
-                $packages[$name] = $this->createPackage($name);
+            if (!isset($packages[$index])) {
+                $packages[$index] = $this->createPackage($index);
             }
 
-            $pending = array_merge($pending, $packages[$name]->listDependencies());
+            $pending = array_merge($pending, $packages[$index]->listDependencies());
 
-            $done[$name] = true;
+            $done[$index] = true;
         }
 
         return $packages;
@@ -145,9 +149,9 @@ class AssetManager
     /**
      * @param AssetPackage[] $packages list of packages
      *
-     * @return AssetPackage[] sorted list of packages
+     * @return AssetPackage[] sorted map of packages
      */
-    protected function sortPackages($packages)
+    private function sortPackages($packages)
     {
         /**
          * @var string[]       $order  list of topologically sorted class-names
@@ -168,7 +172,7 @@ class AssetManager
 
         $order = $sorter->sort(); // TODO QA: catch and re-throw CircularDependencyException here?
 
-        // create sorted list of packages:
+        // create sorted map of packages:
 
         $sorted = [];
 
@@ -184,9 +188,11 @@ class AssetManager
      *
      * @param AssetPackage[] $packages
      *
+     * @return void
+     *
      * @see pepper()
      */
-    protected function pepperPackages($packages)
+    private function pepperPackages($packages)
     {
         foreach ($this->peppering as $pepper) {
             $function = new ReflectionFunction($pepper);
