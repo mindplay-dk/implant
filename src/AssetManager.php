@@ -56,7 +56,13 @@ class AssetManager
      */
     public function populate($model)
     {
-        $packages = $this->sortPackages($this->createPackages());
+        $packages = $this->createPackages();
+
+        if (empty($packages)) {
+            return; // no packages added
+        }
+
+        $packages = $this->sortPackages($packages);
 
         $this->pepperPackages($packages);
 
@@ -130,6 +136,8 @@ class AssetManager
      * @param string $class_name package class-name
      *
      * @return AssetPackage
+     *
+     * @throws UnexpectedValueException
      */
     protected function createPackage($class_name)
     {
@@ -190,6 +198,8 @@ class AssetManager
      *
      * @return void
      *
+     * @throws UnexpectedValueException
+     *
      * @see pepper()
      */
     private function pepperPackages($packages)
@@ -207,9 +217,9 @@ class AssetManager
 
                     if (isset($packages[$name])) {
                         call_user_func($pepper, $packages[$name]);
-                    }
 
-                    continue;
+                        continue;
+                    }
                 }
             }
 

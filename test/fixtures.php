@@ -87,3 +87,6 @@ class PepperedPackage implements AssetPackage
         return [];
     }
 }
+
+class NotAPackage
+{}

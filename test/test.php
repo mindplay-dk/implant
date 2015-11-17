@@ -83,4 +83,74 @@ test(
     }
 );
 
+test(
+    'throws for invalid package name',
+    function () {
+        $manager = new AssetManager();
+
+        $manager->add("not_a_class");
+
+        $model = new AssetModel();
+
+        expect(
+            UnexpectedValueException::class,
+            "should throw for invalid package name",
+            function () use ($manager, $model) {
+                $manager->populate($model);
+            }
+        );
+    }
+);
+
+test(
+    'throws for non-package class-name',
+    function () {
+        $manager = new AssetManager();
+
+        $manager->add(NotAPackage::class);
+
+        $model = new AssetModel();
+
+        expect(
+            UnexpectedValueException::class,
+            "should throw for invalid package name",
+            function () use ($manager, $model) {
+                $manager->populate($model);
+            }
+        );
+    }
+);
+
+test(
+    'throws for invalid pepper function',
+    function () {
+        $manager = new AssetManager();
+
+        $manager->add(A::class);
+
+        $manager->pepper(function ($foo) {});
+
+        $model = new AssetModel();
+
+        expect(
+            UnexpectedValueException::class,
+            "should throw for invalid pepper function",
+            function () use ($manager, $model) {
+                $manager->populate($model);
+            }
+        );
+    }
+);
+
+test(
+    'short-circuits on empty asset manager',
+    function () {
+        $manager = new AssetManager();
+
+        $model = new AssetModel();
+
+        $manager->populate($model);
+    }
+);
+
 exit(run());
