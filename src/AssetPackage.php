@@ -8,7 +8,7 @@ namespace mindplay\implant;
 interface AssetPackage
 {
     /**
-     * @param object $model
+     * @param object $model the model being populated with assets
      *
      * @return void
      */

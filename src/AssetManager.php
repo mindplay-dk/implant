@@ -8,6 +8,10 @@ use ReflectionParameter;
 use UnexpectedValueException;
 use MJS\TopSort\Implementations\StringSort;
 
+/**
+ * This class manages {@see AssetPackage} creation and orders them correctly according to
+ * their dependencies on other packages.
+ */
 class AssetManager
 {
     /**
@@ -26,6 +30,12 @@ class AssetManager
     protected $peppering = [];
 
     /**
+     * Add a given package, including (recursively) the dependencies of that package.
+     *
+     * Adding the same package more than once has no effect.
+     *
+     * The order in which packages are added also has no effect.
+     *
      * @param string $class_name fully-qualified class-name of asset package class
      *
      * @return void
@@ -36,6 +46,17 @@ class AssetManager
     }
 
     /**
+     * Directly inject an anonymous asset package.
+     *
+     * This lends itself well to things like initialization scripts in controllers or views.
+     *
+     * Internally, this is treated just a class-based package, in terms of sorting the injected
+     * package according to it's dependencies; the only difference is, you can't refer to an
+     * injected package as a dependency anywhere else.
+     *
+     * The `$callback` is similar to the {@see AssetPackage::defineAssets()} method, and
+     * `$dependencies` is similar to {@see AssetPackage::getDependencies()}.
+     *
      * @param callable $callback     asset definition callback - function ($model) : void
      * @param string[] $dependencies list of fully-qualified class-names of package dependencies
      *
@@ -155,7 +176,12 @@ class AssetManager
     }
 
     /**
-     * @param AssetPackage[] $packages list of packages
+     * Internally sort packages in dependency ("topological") order.
+     *
+     * Packages are initially sorted by name, to guarantee a predictable base order, e.g.
+     * unaffected by the order in which the packages were added.
+     *
+     * @param AssetPackage[] $packages map of packages
      *
      * @return AssetPackage[] sorted map of packages
      */
