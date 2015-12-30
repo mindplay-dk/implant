@@ -11,7 +11,7 @@
     ],
     "require": {
         "php": ">=5.5",
-        "marcj/topsort": "~0.2"
+        "marcj/topsort": "^1.0"
     },
     "require-dev": {
         "mindplay/testies": "dev-master",
