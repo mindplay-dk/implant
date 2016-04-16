@@ -3,12 +3,10 @@ mindplay/implant
 
 Simple packaging and dependency sorting for embedded JS and CSS assets.
 
+[![PHP Version](https://img.shields.io/badge/php-5.5%2B-blue.svg)](https://packagist.org/packages/mindplay/implant)
 [![Build Status](https://travis-ci.org/mindplay-dk/implant.svg)](https://travis-ci.org/mindplay-dk/implant)
-
 [![Code Coverage](https://scrutinizer-ci.com/g/mindplay-dk/implant/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/mindplay-dk/implant/?branch=master)
-
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/mindplay-dk/implant/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/mindplay-dk/implant/?branch=master)
-
 
 ## Introduction
 
