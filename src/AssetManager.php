@@ -103,9 +103,25 @@ class AssetManager
      * @param Closure $callback function (PackageType $package) : void
      *
      * @return void
+     *
+     * @throws UnexpectedValueException if the given function does not accept precisely one argument
      */
     public function pepper($callback)
     {
+        $function = new ReflectionFunction($callback);
+
+        $params = $function->getParameters();
+
+        if (count($params) !== 1 || $params[0]->getClass() === null) {
+            $file = $function->getFileName();
+            $line = $function->getStartLine();
+
+            throw new UnexpectedValueException(
+                "unexpected function signature at: {$file}, line {$line} " .
+                "(pepper functions must accept precisely one argument, and must provide a type-hint)"
+            );
+        }
+
         $this->peppering[] = $callback;
     }
 
@@ -224,38 +240,20 @@ class AssetManager
      *
      * @return void
      *
-     * @throws UnexpectedValueException
-     *
      * @see pepper()
      */
     private function pepperPackages($packages)
     {
         foreach ($this->peppering as $pepper) {
-            $function = new ReflectionFunction($pepper);
+            $param = new ReflectionParameter($pepper, 0);
 
-            if ($function->getNumberOfParameters() === 1) {
-                $param = new ReflectionParameter($pepper, 0);
+            $class = $param->getClass();
 
-                $class = $param->getClass();
+            $name = $class->name;
 
-                if ($class !== null) {
-                    $name = $class->name;
-
-                    if (isset($packages[$name])) {
-                        call_user_func($pepper, $packages[$name]);
-
-                        continue;
-                    }
-                }
+            if (isset($packages[$name])) {
+                call_user_func($pepper, $packages[$name]);
             }
-
-            $file = $function->getFileName();
-            $line = $function->getStartLine();
-
-            throw new UnexpectedValueException(
-                "unexpected function signature at: {$file}, line {$line} " .
-                "(pepper functions must accept precisely one argument, and must provide a type-hint)"
-            );
         }
     }
 }

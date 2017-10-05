@@ -61,6 +61,29 @@ test(
 );
 
 test(
+    'ignores pepper functions for undefined packages',
+    function () {
+        $manager = new AssetManager();
+
+        $manager->add(A::class);
+
+        $applied = false;
+
+        $manager->pepper(function (PepperedPackage $package) use (&$applied) {
+            $applied = true; // this should never execute
+        });
+
+        $model = new AssetModel();
+
+        $manager->populate($model);
+
+        ok(!$applied, "pepper function was ignored");
+
+        eq($model->js, ['a.js'], 'assets were added');
+    }
+);
+
+test(
     'can inject anonymous assets',
     function () {
         $manager = new AssetManager();
@@ -127,16 +150,21 @@ test(
         $manager = new AssetManager();
 
         $manager->add(A::class);
-
-        $manager->pepper(function ($foo) {});
-
-        $model = new AssetModel();
+        $manager->add(B::class);
 
         expect(
             UnexpectedValueException::class,
-            "should throw for invalid pepper function",
-            function () use ($manager, $model) {
-                $manager->populate($model);
+            "should throw for pepper function with wrong argument count",
+            function () use ($manager) {
+                $manager->pepper(function (A $a, B $b) {});
+            }
+        );
+
+        expect(
+            UnexpectedValueException::class,
+            "should throw for pepper function with missing type-hint",
+            function () use ($manager) {
+                $manager->pepper(function ($foo) {});
             }
         );
     }
